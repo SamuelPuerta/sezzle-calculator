@@ -47,65 +47,77 @@ export default function App() {
   }
 
   return (
-    <main className="card">
-      <h1>Calculator</h1>
+    <div className="page">
+      <main className="layout">
+        <div className="controls">
+          <h1>Calculator</h1>
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="ops" role="group" aria-label="Operation">
-          {OPERATIONS.map((o) => (
-            <button
-              key={o.id}
-              type="button"
-              className={o.id === opId ? "op active" : "op"}
-              aria-pressed={o.id === opId}
-              onClick={() => selectOperation(o.id)}
-            >
-              <span aria-hidden="true">{o.symbol}</span> {o.label}
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="ops" role="group" aria-label="Operation">
+              {OPERATIONS.map((o) => (
+                <button
+                  key={o.id}
+                  type="button"
+                  className={o.id === opId ? "op active" : "op"}
+                  aria-pressed={o.id === opId}
+                  onClick={() => selectOperation(o.id)}
+                >
+                  <span aria-hidden="true">{o.symbol}</span> {o.label}
+                </button>
+              ))}
+            </div>
+
+            <Field
+              id="a"
+              label={op.unary ? "Number" : op.id === "percentage" ? "Percent" : "First number"}
+              value={a}
+              error={fieldErrors.a}
+              onChange={(v) => {
+                setA(v);
+                clearFeedback();
+              }}
+            />
+            {!op.unary && (
+              <Field
+                id="b"
+                label={op.hintB ?? "Second number"}
+                value={b}
+                error={fieldErrors.b}
+                onChange={(v) => {
+                  setB(v);
+                  clearFeedback();
+                }}
+              />
+            )}
+
+            <button type="submit" className="submit" disabled={loading}>
+              {loading ? "Calculating…" : "Calculate"}
             </button>
-          ))}
+          </form>
         </div>
 
-        <Field
-          id="a"
-          label={op.unary ? "Number" : op.id === "percentage" ? "Percent" : "First number"}
-          value={a}
-          error={fieldErrors.a}
-          onChange={(v) => {
-            setA(v);
-            clearFeedback();
-          }}
-        />
-        {!op.unary && (
-          <Field
-            id="b"
-            label={op.hintB ?? "Second number"}
-            value={b}
-            error={fieldErrors.b}
-            onChange={(v) => {
-              setB(v);
-              clearFeedback();
-            }}
-          />
-        )}
+        <div className="panel">
+          <div className="output" aria-live="polite">
+            {result !== null && (
+              <p className="result" role="status">
+                = <strong>{result}</strong>
+              </p>
+            )}
+            {serverError && (
+              <p className="error" role="alert">
+                {serverError}
+              </p>
+            )}
+          </div>
+        </div>
+      </main>
 
-        <button type="submit" className="submit" disabled={loading}>
-          {loading ? "Calculating…" : "Calculate"}
-        </button>
-      </form>
-
-      <div className="output" aria-live="polite">
-        {result !== null && (
-          <p className="result" role="status">
-            = <strong>{result}</strong>
-          </p>
-        )}
-        {serverError && (
-          <p className="error" role="alert">
-            {serverError}
-          </p>
-        )}
-      </div>
-    </main>
+      <footer className="footer">
+        <a href="https://samuel-puerta.vercel.app/" target="_blank" rel="noopener noreferrer">
+          Samuel Puerta
+        </a>
+      </footer>
+    </div>
   );
 }
 
